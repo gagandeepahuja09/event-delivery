@@ -8,10 +8,13 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/go-redis/redis"
 	"github.com/gorilla/mux"
 
 	log "github.com/sirupsen/logrus"
 )
+
+var Rdb *redis.Client
 
 func serveRoutes(router *mux.Router) {
 	srv := &http.Server{
@@ -43,6 +46,18 @@ func serveRoutes(router *mux.Router) {
 	}
 
 	log.Info("Server exiting")
+}
+
+func InitProviders() {
+	initRedis()
+}
+
+func initRedis() {
+	Rdb = redis.NewClient(&redis.Options{
+		Addr:     "localhost:6379",
+		Password: "",
+		DB:       0,
+	})
 }
 
 func InitRouter() {
