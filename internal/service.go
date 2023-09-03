@@ -4,15 +4,21 @@ import (
 	"context"
 
 	log "github.com/sirupsen/logrus"
+	"golang.org/x/exp/slices"
 )
 
-const (
-	eventsChannel = "events_channel"
-)
-
-func handleProxyRequest(ctx context.Context, prJsonStr string) {
-	log.Infof("EVENT_TO_PUBLISH", prJsonStr)
-	if err := Rdb.Publish(eventsChannel, prJsonStr).Err(); err != nil {
-		log.Errorf("EVENT_PUBLISH_ERROR", err)
+func handleProxyRequest(ctx context.Context, pr proxyRequest) {
+	for _, dest := range pr.Destinations {
+		if !slices.Contains(supportedDestinations, dest) {
+			log.Errorf("SKIPPING_UNSUPPORTED_DESTINATION", dest)
+			continue
+		}
+		if err := Rdb.Publish(getChannelName(dest), pr.Payload).Err(); err != nil {
+			log.Errorf("EVENT_PUBLISH_ERROR", err)
+		}
+		log.Infof("EVENT_PUBLISHED", map[string]interface{}{
+			"destination": dest,
+			"payload":     pr.Payload,
+		})
 	}
 }
