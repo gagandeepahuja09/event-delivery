@@ -54,7 +54,7 @@ func consumePayloads(channel <-chan *redis.Message, dest string) {
 			"message": message,
 			"channel": msg.Channel,
 		})
-		makeAPICallWithRetry(dest, message)
+		logApiStatusForDestination(makeAPICallWithRetry(dest, message), dest, msg.Payload)
 	}
 }
 
@@ -64,14 +64,10 @@ func makeAPICallWithRetry(dest, payload string) error {
 	for retry := 0; retry < maxRetries; retry++ {
 		err = makeAPICall(dest, payload)
 		if err == nil {
-			log.Infof("SUCCESSFUL_API_CALL_TO_DESTINATION", map[string]interface{}{
-				"destination": dest,
-				"payload":     payload,
-				"retry_count": retry,
-			})
+
 			return nil
 		}
-		log.Errorf("ERROR_API_CALL_TO_DESTINATION", map[string]interface{}{
+		log.Errorf("RETRY_API_CALL_TO_DESTINATION_DUE_TO_FAILURE", map[string]interface{}{
 			"destination": dest,
 			"payload":     payload,
 			"retry_count": retry,
@@ -87,4 +83,18 @@ func makeAPICall(dest, payload string) error {
 		return errors.New(errorServerUnreachable)
 	}
 	return nil
+}
+
+func logApiStatusForDestination(err error, dest, payload string) {
+	if err == nil {
+		log.Infof("SUCCESSFUL_API_CALL_TO_DESTINATION", map[string]interface{}{
+			"destination": dest,
+			"payload":     payload,
+		})
+	} else {
+		log.Infof("API_CALL_TO_DESTINATION_FAILED_AFTER_RETRIES", map[string]interface{}{
+			"destination": dest,
+			"payload":     payload,
+		})
+	}
 }

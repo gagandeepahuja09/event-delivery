@@ -1,0 +1,14 @@
+version: '3'
+services:
+  event-delivery-app:
+    build:
+      context: .
+    ports:
+      - "9410:9410" 
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"

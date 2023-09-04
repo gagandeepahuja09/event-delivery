@@ -18,7 +18,7 @@ var Rdb *redis.Client
 
 func serveRoutes(router *mux.Router) {
 	srv := &http.Server{
-		Addr:    "localhost:9410",
+		Addr:    ":9410",
 		Handler: router,
 	}
 
@@ -54,7 +54,7 @@ func InitProviders() {
 
 func initRedis() {
 	Rdb = redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
+		Addr:     "redis:6379",
 		Password: "",
 		DB:       0,
 	})
