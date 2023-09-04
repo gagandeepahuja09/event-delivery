@@ -29,7 +29,7 @@ jobs:
       run: sleep 10
 
     - name: Run Go tests
-      run: docker-compose exec event-delivery-app go test ./...
+      run: docker-compose exec -T event-delivery-app go test ./...
 
     - name: Stop Docker services
       run: docker-compose down
