@@ -7,6 +7,8 @@ services:
       - "9410:9410" 
     depends_on:
       - redis
+    environment:
+     - REDIS_ADDR=redis:6379
 
   redis:
     image: redis:latest

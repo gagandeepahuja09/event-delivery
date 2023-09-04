@@ -14,7 +14,7 @@ var ErrPublishFailedDestinationTpl = "publish failed at the following destinatio
 func handleProxyRequest(ctx context.Context, pr proxyRequest) error {
 	for _, dest := range pr.Destinations {
 		if !slices.Contains(supportedDestinations, dest) {
-			log.Errorf("SKIPPING_UNSUPPORTED_DESTINATION", dest)
+			log.Error("SKIPPING_UNSUPPORTED_DESTINATION", dest)
 			return newCustomError(ErrUnsupportedDestination, 400)
 		}
 	}
@@ -23,9 +23,9 @@ func handleProxyRequest(ctx context.Context, pr proxyRequest) error {
 	for _, dest := range pr.Destinations {
 		if err := Rdb.Publish(getChannelName(dest), pr.Payload).Err(); err != nil {
 			publishFailedDestinations = append(publishFailedDestinations, dest)
-			log.Errorf("EVENT_PUBLISH_ERROR", err)
+			log.Error("EVENT_PUBLISH_ERROR", err)
 		}
-		log.Infof("EVENT_PUBLISHED", map[string]interface{}{
+		log.Info("EVENT_PUBLISHED", map[string]interface{}{
 			"destination": dest,
 			"payload":     pr.Payload,
 		})

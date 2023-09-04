@@ -15,8 +15,8 @@ To get started with our server, follow these simple steps:
    --header 'Content-Type: application/json' \
    --data-raw '{
        "payload": "Hello123",
-       "user_id": "123456",
-       "destinations": [ "salesforce", "marketo", "c", "google_analytics"]
+       "user_id": "user_123456",
+       "destinations": [ "salesforce", "marketo", "google_analytics"]
    }'
    ```
 

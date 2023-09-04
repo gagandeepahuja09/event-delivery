@@ -49,7 +49,7 @@ func ProcessEvents() {
 func consumePayloads(channel <-chan *redis.Message, dest string) {
 	for msg := range channel {
 		message := msg.Payload
-		log.Infof("MESSAGE_RECEIVED", map[string]interface{}{
+		log.Info("MESSAGE_RECEIVED", map[string]interface{}{
 			"message": message,
 			"channel": msg.Channel,
 		})
@@ -66,7 +66,7 @@ func makeAPICallWithRetry(dest, payload string) error {
 
 			return nil
 		}
-		log.Errorf("RETRY_API_CALL_TO_DESTINATION_DUE_TO_FAILURE", map[string]interface{}{
+		log.Error("RETRY_API_CALL_TO_DESTINATION_DUE_TO_FAILURE", map[string]interface{}{
 			"destination": dest,
 			"payload":     payload,
 			"retry_count": retry,
@@ -86,12 +86,12 @@ func makeAPICall(dest, payload string) error {
 
 func logApiStatusForDestination(err error, dest, payload string) {
 	if err == nil {
-		log.Infof("SUCCESSFUL_API_CALL_TO_DESTINATION", map[string]interface{}{
+		log.Info("SUCCESSFUL_API_CALL_TO_DESTINATION", map[string]interface{}{
 			"destination": dest,
 			"payload":     payload,
 		})
 	} else {
-		log.Errorf("API_CALL_TO_DESTINATION_FAILED_AFTER_RETRIES", map[string]interface{}{
+		log.Error("API_CALL_TO_DESTINATION_FAILED_AFTER_RETRIES", map[string]interface{}{
 			"destination": dest,
 			"payload":     payload,
 		})

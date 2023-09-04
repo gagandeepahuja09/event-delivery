@@ -10,7 +10,7 @@ import (
 func proxy(w http.ResponseWriter, r *http.Request) {
 	var pr proxyRequest
 	if err := json.NewDecoder(r.Body).Decode(&pr); err != nil {
-		log.Errorf("REQUEST_BODY_DECODE_ERROR", err)
+		log.Error("REQUEST_BODY_DECODE_ERROR", err)
 	}
 	err := handleProxyRequest(r.Context(), pr)
 	Respond(r, w, map[string]interface{}{"successfully_queued": true}, err)
