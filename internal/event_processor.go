@@ -1,7 +1,6 @@
 package internal
 
 import (
-	"errors"
 	"math/rand"
 	"sync"
 	"time"
@@ -80,7 +79,7 @@ func makeAPICallWithRetry(dest, payload string) error {
 func makeAPICall(dest, payload string) error {
 	randomNumber := rand.Intn(101)
 	if randomNumber < destinationToErrorPercentageMap[dest] {
-		return errors.New(errorServerUnreachable)
+		return newCustomError(errorServerUnreachable, 400)
 	}
 	return nil
 }
@@ -92,7 +91,7 @@ func logApiStatusForDestination(err error, dest, payload string) {
 			"payload":     payload,
 		})
 	} else {
-		log.Infof("API_CALL_TO_DESTINATION_FAILED_AFTER_RETRIES", map[string]interface{}{
+		log.Errorf("API_CALL_TO_DESTINATION_FAILED_AFTER_RETRIES", map[string]interface{}{
 			"destination": dest,
 			"payload":     payload,
 		})

@@ -34,7 +34,6 @@ To get started with our server, follow these simple steps:
 
    - `SUCCESSFUL_API_CALL_TO_DESTINATION`: This log indicates that the API call to the specified destination was successful. It means your data has been successfully delivered to the destination without any issues.
 
-   - `API_CALL_TO_DESTINATION_FAILED_AFTER_RETRIES`: This log signifies that the API call to the destination initially failed but was retried multiple times. Unfortunately, even after retries, the call still failed. This may require further investigation to resolve any connectivity or configuration issues.
+   - `API_CALL_TO_DESTINATION_FAILED_AFTER_RETRIES`: This log signifies that the API call to the destination initially failed but was retried multiple times. Unfortunately, even after retries, the call still failed. This generally happens due to the downstream destinations facing any sort of outage. You can contact the downstream support team. For any help, our support team is also available.
 
 That's it! You're all set to interact with the server, understand the logs, and send event data to your specified destinations. Happy coding! 🚀
-```

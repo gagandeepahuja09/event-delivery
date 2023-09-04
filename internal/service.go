@@ -2,18 +2,27 @@ package internal
 
 import (
 	"context"
+	"fmt"
 
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/exp/slices"
 )
 
-func handleProxyRequest(ctx context.Context, pr proxyRequest) {
+var ErrUnsupportedDestination = fmt.Sprintf("destinations array should contain values only from the following supported destinations list: %v", supportedDestinations)
+var ErrPublishFailedDestinationTpl = "publish failed at the following destinations: %v"
+
+func handleProxyRequest(ctx context.Context, pr proxyRequest) error {
 	for _, dest := range pr.Destinations {
 		if !slices.Contains(supportedDestinations, dest) {
 			log.Errorf("SKIPPING_UNSUPPORTED_DESTINATION", dest)
-			continue
+			return newCustomError(ErrUnsupportedDestination, 400)
 		}
+	}
+
+	publishFailedDestinations := []string{}
+	for _, dest := range pr.Destinations {
 		if err := Rdb.Publish(getChannelName(dest), pr.Payload).Err(); err != nil {
+			publishFailedDestinations = append(publishFailedDestinations, dest)
 			log.Errorf("EVENT_PUBLISH_ERROR", err)
 		}
 		log.Infof("EVENT_PUBLISHED", map[string]interface{}{
@@ -21,4 +30,8 @@ func handleProxyRequest(ctx context.Context, pr proxyRequest) {
 			"payload":     pr.Payload,
 		})
 	}
+	if len(publishFailedDestinations) > 0 {
+		return newCustomError(fmt.Sprintf(ErrPublishFailedDestinationTpl, publishFailedDestinations), 500)
+	}
+	return nil
 }
